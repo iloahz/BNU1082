@@ -15,9 +15,6 @@ handlers:
 - url: /
   static_files: index.html
   upload: index.html
-
-- url: /Submit
-  script: bnu1082.app
  
 - url: /.*
   script: bnu1082.app

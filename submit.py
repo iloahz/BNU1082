@@ -13,9 +13,9 @@ class code:
 class problem:
     def __init__(self, pid):
         self.pid = pid;
-        self.desUrl = "http://acm.bnu.edu.cn/contest/problem_show.php?pid=" + str(pid);
-        self.subUrl = "http://acm.bnu.edu.cn/contest/submit.php?pid=" + str(pid);
-        self.postUrl = "http://acm.bnu.edu.cn/contest/action.php";
+        self.desUrl = "http://219.224.30.70/contest/problem_show.php?pid=" + str(pid);
+        self.subUrl = "http://219.224.30.70/contest/submit.php?pid=" + str(pid);
+        self.postUrl = "http://219.224.30.70/contest/action.php";
 
 def genData(username,password,problem,code):
     data = {};
@@ -27,12 +27,21 @@ def genData(username,password,problem,code):
     return postData;
 
 def countAC(username,password):
-    statusUrl = "http://acm.bnu.edu.cn/contest/status.php?showname=" + username + "&showpid=1082&showres=Accepted&showlang=";
+    statusUrl = "http://219.224.30.70/contest/status.php?showname=" + username + "&showpid=1082&showres=Accepted&showlang=";
+##    url = "http://219.224.30.70/contest"
+##    test = urlfetch.fetch(url)
+##    print "abc"
+##    print url
+####    print test.content
+##    return 0
+    countError = 0
     while True:
         try:
             statusPage = urlfetch.fetch(statusUrl).content
             break
         except apiproxy_errors.DeadlineExceededError:
+            countError += 1
+            print "Fetch status error", countError
             pass
     AC = -3;
     while True:
@@ -58,20 +67,36 @@ def submit(problem,data,username,password):
     loginData["username"] = username;
     loginData["password"] = password;
     loginPost = urllib.urlencode(loginData)
-    response = urlfetch.fetch(url="http://acm.bnu.edu.cn/contest/login.php",
-                              payload=loginPost,
-                              method=urlfetch.POST,
-                              follow_redirects=True)
+    countError = 0
+    while True:
+        try:
+            response = urlfetch.fetch(url="http://219.224.30.70/contest/login.php",
+                                      payload=loginPost,
+                                      method=urlfetch.POST,
+                                      follow_redirects=False)
+            break
+        except apiproxy_errors.DeadlineExceededError:
+            countError += 1
+            print "Login error", countError
+            pass
     content = response.headers
     cookie = Cookie.SimpleCookie(response.headers.get('set-cookie',''))
 ##    print "abc"
 ##    print data
 ##    print "endof abc"
-    response = urlfetch.fetch(url="http://acm.bnu.edu.cn/contest/action.php",
-                              payload=data,
-                              method=urlfetch.POST,
-                              headers={"Cookie":make_cookie_header(cookie)},
-                              follow_redirects=False)
+    countError = 0
+    while True:
+        try:
+            response = urlfetch.fetch(url="http://219.224.30.70/contest/action.php",
+                                      payload=data,
+                                      method=urlfetch.POST,
+                                      headers={"Cookie":make_cookie_header(cookie)},
+                                      follow_redirects=False)
+            break
+        except apiproxy_errors.DeadlineExceededError:
+            countError += 1
+            print "Post data error", countError
+            pass
 ##    content = response.content
 
 def giveAC(username,password):
@@ -83,9 +108,12 @@ def giveAC(username,password):
     while countAC(username,password)==nowAC:
         submit(p1082,data,username,password);
         totSubmit += 1
+        print "Tried", totSubmit, "times"
         if totSubmit > 50:
+            return "Bad RP you've got"
             break;
         time.sleep(5);
+    return "You've got an AC!"
 
 
 ##username = raw_input("username:");
