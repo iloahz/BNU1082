@@ -1,2 +1,1 @@
-Nothing to tell, simple enough
-==============================
+See http://attii.com[[development blog]]
