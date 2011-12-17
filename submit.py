@@ -3,6 +3,7 @@ import urllib2
 import Cookie
 import time
 from google.appengine.api import urlfetch
+from google.appengine.runtime import apiproxy_errors
 
 class code:
     def __init__(self, filename):
@@ -27,7 +28,12 @@ def genData(username,password,problem,code):
 
 def countAC(username,password):
     statusUrl = "http://acm.bnu.edu.cn/contest/status.php?showname=" + username + "&showpid=1082&showres=Accepted&showlang=";
-    statusPage = urlfetch.fetch(statusUrl).content;
+    while True:
+        try:
+            statusPage = urlfetch.fetch(statusUrl).content
+            break
+        except apiproxy_errors.DeadlineExceededError:
+            pass
     AC = -3;
     while True:
         loc = statusPage.find("Accepted");
