@@ -1,1 +1,1 @@
-See http://attii.com[[development blog]]
+See [[development blog]]http://attiix.com
