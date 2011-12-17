@@ -41,7 +41,11 @@ def make_cookie_header(cookie):
     ret = ""
     for val in cookie.values():
         ret+="%s=%s; "%(val.key, val.value)
-    return ret
+    s = ""
+    for i in ret:
+        if i!=',':
+            s += i
+    return s
 
 def submit(problem,data,username,password):
     loginData = {};
@@ -52,39 +56,29 @@ def submit(problem,data,username,password):
                               payload=loginPost,
                               method=urlfetch.POST,
                               follow_redirects=True)
-##    response = urlfetch.fetch("http://acm.bnu.edu.cn/contest")
-##    print "abc"
     content = response.headers
-##    cookie = content["set-cookie"]
     cookie = Cookie.SimpleCookie(response.headers.get('set-cookie',''))
-##    for i in content:
-##        print i,'___________',content[i]
+##    print "abc"
+##    print data
 ##    print "endof abc"
-##    print cookie
-##    print type(cookie)
-##    print "endof cookie"
-    response = urlfetch.fetch(url="http://acm.bnu.edu.cn/contest/submit.php",
+    response = urlfetch.fetch(url="http://acm.bnu.edu.cn/contest/action.php",
                               payload=data,
                               method=urlfetch.POST,
                               headers={"Cookie":make_cookie_header(cookie)},
                               follow_redirects=False)
-    content = response.content
-    return content
-##    loginPost = urllib.urlencode(loginData);
-##    cookie = urllib2.HTTPCookieProcessor();
-##    opener = urllib2.build_opener(cookie);
-##    opener.open("http://acm.bnu.edu.cn/contest")
-##    opener.open("http://acm.bnu.edu.cn/contest/login.php",loginPost);
-##    opener.open(problem.postUrl,urllib.urlencode(data));
+##    content = response.content
 
 def giveAC(username,password):
+    totSubmit = 0
     p1082 =  problem(1082);
     c1082 = code("bnu1082.cpp");
     data = genData(username,password,p1082,c1082);
     nowAC = countAC(username,password);
     while countAC(username,password)==nowAC:
-        res = submit(p1082,data,username,password);
-        return res
+        submit(p1082,data,username,password);
+        totSubmit += 1
+        if totSubmit > 50:
+            break;
         time.sleep(5);
 
 
