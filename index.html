@@ -1,13 +1,15 @@
 <html>
     <head>
-        <title>1082 Automaton 0.03</title>
+        <title>BNU1082 Automaton 0.03</title>
+        <script type="text/javascript" src="./static/js/submit.js"></script>
     </head>
     <body>
-        <form align="center" action="/Submit" method=post>
-            <p>username:<input type="text" name="username" /></p>
-            <p>password:<input type="password" name="password" /></p>
-            <p><input type="submit" value="Give me an AC!!"></p>
-        </form>
+        <table align="center">
+            <tr><th>username:<input type="text" id="username" name="username" /></th></tr>
+            <tr><th>password:<input type="password" id="password" name="password" /></th></tr>
+            <tr><th><input type="button" id="submit" value="Give me an AC!!" onclick="submit(0,0)"></th></tr>
+            <tr><th><textarea rows="32" cols="128" id="result" name="result" value="" disabled="true"></textarea></th></tr>
+        </table>
     </body>
 </html>
 

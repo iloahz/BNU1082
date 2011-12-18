@@ -16,14 +16,32 @@
 #
 import cgi
 import webapp2
-from submit import giveAC
+from submit import giveAc, giveAcOnce
 
 class Submit(webapp2.RequestHandler):
     def post(self):
         username = cgi.escape(self.request.get('username'))
         password = cgi.escape(self.request.get('password'))
-        content = giveAC(username,password)
+        content = giveAc(username,password)
         self.response.out.write(content)
 
-app = webapp2.WSGIApplication([('/Submit', Submit)],
+class SubmitOnce(webapp2.RequestHandler):
+    def get(self):
+        username = cgi.escape(self.request.get('username'))
+        password = cgi.escape(self.request.get('password'))
+        totalSubmit = cgi.escape(self.request.get('totalSubmit'))
+        res = giveAcOnce(username,password)
+        a = res[0]
+        b = res[1]
+        s = ""
+##        s += str(a) + " " + str(b) + " " + str(a<b) + "_____"
+        if a < b:
+            s += r"You've got an AC!"
+        else:
+            s += "This is the " + str(totalSubmit) + ".. time of submitting for you,";
+        s += " Currently you have " + str(b) + " AC(s)."
+        self.response.out.write(s)
+
+app = webapp2.WSGIApplication([('/Submit', Submit),
+                               ('/SubmitOnce',SubmitOnce)],
                               debug=True)

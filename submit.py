@@ -26,7 +26,7 @@ def genData(username,password,problem,code):
     postData = urllib.urlencode(data)
     return postData;
 
-def countAC(username,password):
+def countAc(username,password):
     statusUrl = "http://219.224.30.70/contest/status.php?showname=" + username + "&showpid=1082&showres=Accepted&showlang=";
 ##    url = "http://219.224.30.70/contest"
 ##    test = urlfetch.fetch(url)
@@ -43,14 +43,14 @@ def countAC(username,password):
             countError += 1
             print "Fetch status error", countError
             pass
-    AC = -3;
+    Ac = -3;
     while True:
         loc = statusPage.find("Accepted");
         if (loc<0):
             break;
-        AC += 1;
+        Ac += 1;
         statusPage = statusPage[loc+1:len(statusPage)];
-    return AC;
+    return Ac;
 
 def make_cookie_header(cookie):
     ret = ""
@@ -95,17 +95,17 @@ def submit(problem,data,username,password):
             break
         except apiproxy_errors.DeadlineExceededError:
             countError += 1
-            print "Post data error", countError
+            print "Submit error", countError
             pass
 ##    content = response.content
 
-def giveAC(username,password):
+def giveAc(username,password):
     totSubmit = 0
     p1082 =  problem(1082);
     c1082 = code("bnu1082.cpp");
     data = genData(username,password,p1082,c1082);
-    nowAC = countAC(username,password);
-    while countAC(username,password)==nowAC:
+    nowAc = countAc(username,password);
+    while countAc(username,password)==nowAc:
         submit(p1082,data,username,password);
         totSubmit += 1
         print "Tried", totSubmit, "times"
@@ -113,9 +113,22 @@ def giveAC(username,password):
             return "Bad RP you've got"
             break;
         time.sleep(5);
-    return "You've got an AC!"
+    return "You've got an Ac!"
+
+"""
+if got AC, return True, otherwise False
+"""
+def giveAcOnce(username,password):
+    p1082 =  problem(1082)
+    c1082 = code("bnu1082.cpp")
+    data = genData(username,password,p1082,c1082)
+    nowAc = countAc(username,password)
+    submit(p1082,data,username,password)
+    time.sleep(3)
+    newAc = countAc(username,password)
+    return [nowAc,newAc]
 
 
 ##username = raw_input("username:");
 ##password = raw_input("password:");
-##giveAC(username,password);
+##giveAc(username,password);
